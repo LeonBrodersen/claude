@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YT Shorts Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="#ff4444">
+          <path d="M23.5 6.2c-.3-1-1-1.8-2-2.1C19.6 3.5 12 3.5 12 3.5s-7.6 0-9.5.6c-1 .3-1.7 1.1-2 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8c.3 1 1 1.8 2 2.1 1.9.6 9.5.6 9.5.6s7.6 0 9.5-.6c1-.3 1.7-1.1 2-2.1.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/>
+        </svg>
+        <span>Shorts Dashboard</span>
+      </div>
+    </div>
+    <ul class="nav-links">
+      <li>
+        <a href="#" class="nav-link active" data-view="overview">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" fill="currentColor"/></svg>
+          <span>Gesamtübersicht</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-view="channel1">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="currentColor"/></svg>
+          <span id="nav-channel1-name">Kanal 1</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-view="channel2">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="currentColor"/></svg>
+          <span id="nav-channel2-name">Kanal 2</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-view="settings">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" fill="currentColor"/></svg>
+          <span>Einstellungen</span>
+        </a>
+      </li>
+    </ul>
+    <div class="sidebar-footer">
+      <p class="version">v1.0.0 &middot; Demo-Daten</p>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <button class="menu-toggle" id="menuToggle">
+          <svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" fill="currentColor"/></svg>
+        </button>
+        <h1 id="page-title">Gesamtübersicht</h1>
+      </div>
+      <div class="header-right">
+        <div class="date-range">
+          <select id="dateRange">
+            <option value="7">Letzte 7 Tage</option>
+            <option value="14">Letzte 14 Tage</option>
+            <option value="30" selected>Letzte 30 Tage</option>
+            <option value="90">Letzte 90 Tage</option>
+          </select>
+        </div>
+        <button class="refresh-btn" id="refreshBtn" title="Daten aktualisieren">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Overview View -->
+    <section id="view-overview" class="view active">
+      <div class="stats-grid overview-stats">
+        <div class="stat-card accent-red">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="currentColor"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Gesamt Views</span>
+            <span class="stat-value" id="total-views">--</span>
+            <span class="stat-change positive" id="total-views-change">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-blue">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" width="24" height="24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" fill="currentColor"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Gesamt Likes</span>
+            <span class="stat-value" id="total-likes">--</span>
+            <span class="stat-change positive" id="total-likes-change">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-green">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" width="24" height="24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z" fill="currentColor"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Gesamt Kommentare</span>
+            <span class="stat-value" id="total-comments">--</span>
+            <span class="stat-change positive" id="total-comments-change">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-purple">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" width="24" height="24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" fill="currentColor"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Gesamt Abonnenten (neu)</span>
+            <span class="stat-value" id="total-subs">--</span>
+            <span class="stat-change positive" id="total-subs-change">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-orange">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" width="24" height="24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z" fill="currentColor"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Gesamt Shorts</span>
+            <span class="stat-value" id="total-shorts">--</span>
+            <span class="stat-change" id="total-shorts-change">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-teal">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" width="24" height="24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z" fill="currentColor"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Engagement Rate</span>
+            <span class="stat-value" id="total-engagement">--</span>
+            <span class="stat-change" id="total-engagement-change">--</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Channel Comparison -->
+      <div class="charts-grid">
+        <div class="chart-card wide">
+          <div class="chart-header">
+            <h3>Views Vergleich (Shorts)</h3>
+            <div class="chart-legend" id="views-legend"></div>
+          </div>
+          <div class="chart-body">
+            <canvas id="overviewViewsChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Engagement Vergleich</h3>
+          </div>
+          <div class="chart-body">
+            <canvas id="overviewEngagementChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Views Verteilung</h3>
+          </div>
+          <div class="chart-body">
+            <canvas id="overviewDistributionChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Shorts Comparison -->
+      <div class="table-section">
+        <h3>Top Shorts - Beide Kanäle</h3>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Titel</th>
+                <th>Kanal</th>
+                <th>Views</th>
+                <th>Likes</th>
+                <th>Kommentare</th>
+                <th>Engagement</th>
+                <th>Datum</th>
+              </tr>
+            </thead>
+            <tbody id="overview-top-shorts"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Channel 1 View -->
+    <section id="view-channel1" class="view">
+      <div class="channel-header-card">
+        <div class="channel-avatar" id="ch1-avatar">K1</div>
+        <div class="channel-meta">
+          <h2 id="ch1-name">Kanal 1</h2>
+          <p id="ch1-description">--</p>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card accent-red">
+          <div class="stat-info">
+            <span class="stat-label">Shorts Views</span>
+            <span class="stat-value" id="ch1-views">--</span>
+            <span class="stat-change" id="ch1-views-change">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-blue">
+          <div class="stat-info">
+            <span class="stat-label">Shorts Likes</span>
+            <span class="stat-value" id="ch1-likes">--</span>
+            <span class="stat-change" id="ch1-likes-change">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-green">
+          <div class="stat-info">
+            <span class="stat-label">Kommentare</span>
+            <span class="stat-value" id="ch1-comments">--</span>
+            <span class="stat-change" id="ch1-comments-change">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-purple">
+          <div class="stat-info">
+            <span class="stat-label">Neue Abonnenten</span>
+            <span class="stat-value" id="ch1-subs">--</span>
+            <span class="stat-change" id="ch1-subs-change">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-orange">
+          <div class="stat-info">
+            <span class="stat-label">Anzahl Shorts</span>
+            <span class="stat-value" id="ch1-count">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-teal">
+          <div class="stat-info">
+            <span class="stat-label">Engagement Rate</span>
+            <span class="stat-value" id="ch1-engagement">--</span>
+            <span class="stat-change" id="ch1-engagement-change">--</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card wide">
+          <div class="chart-header"><h3>Views Verlauf</h3></div>
+          <div class="chart-body"><canvas id="ch1ViewsChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>Likes vs Kommentare</h3></div>
+          <div class="chart-body"><canvas id="ch1EngagementChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>Beste Upload-Zeiten</h3></div>
+          <div class="chart-body"><canvas id="ch1TimesChart"></canvas></div>
+        </div>
+        <div class="chart-card wide">
+          <div class="chart-header"><h3>Views pro Short</h3></div>
+          <div class="chart-body"><canvas id="ch1PerVideoChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="table-section">
+        <h3>Alle Shorts - Detailansicht</h3>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Titel</th>
+                <th>Views</th>
+                <th>Likes</th>
+                <th>Kommentare</th>
+                <th>Like-Rate</th>
+                <th>Datum</th>
+              </tr>
+            </thead>
+            <tbody id="ch1-shorts-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Channel 2 View -->
+    <section id="view-channel2" class="view">
+      <div class="channel-header-card">
+        <div class="channel-avatar accent-bg-blue" id="ch2-avatar">K2</div>
+        <div class="channel-meta">
+          <h2 id="ch2-name">Kanal 2</h2>
+          <p id="ch2-description">--</p>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card accent-red">
+          <div class="stat-info">
+            <span class="stat-label">Shorts Views</span>
+            <span class="stat-value" id="ch2-views">--</span>
+            <span class="stat-change" id="ch2-views-change">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-blue">
+          <div class="stat-info">
+            <span class="stat-label">Shorts Likes</span>
+            <span class="stat-value" id="ch2-likes">--</span>
+            <span class="stat-change" id="ch2-likes-change">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-green">
+          <div class="stat-info">
+            <span class="stat-label">Kommentare</span>
+            <span class="stat-value" id="ch2-comments">--</span>
+            <span class="stat-change" id="ch2-comments-change">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-purple">
+          <div class="stat-info">
+            <span class="stat-label">Neue Abonnenten</span>
+            <span class="stat-value" id="ch2-subs">--</span>
+            <span class="stat-change" id="ch2-subs-change">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-orange">
+          <div class="stat-info">
+            <span class="stat-label">Anzahl Shorts</span>
+            <span class="stat-value" id="ch2-count">--</span>
+          </div>
+        </div>
+        <div class="stat-card accent-teal">
+          <div class="stat-info">
+            <span class="stat-label">Engagement Rate</span>
+            <span class="stat-value" id="ch2-engagement">--</span>
+            <span class="stat-change" id="ch2-engagement-change">--</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card wide">
+          <div class="chart-header"><h3>Views Verlauf</h3></div>
+          <div class="chart-body"><canvas id="ch2ViewsChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>Likes vs Kommentare</h3></div>
+          <div class="chart-body"><canvas id="ch2EngagementChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>Beste Upload-Zeiten</h3></div>
+          <div class="chart-body"><canvas id="ch2TimesChart"></canvas></div>
+        </div>
+        <div class="chart-card wide">
+          <div class="chart-header"><h3>Views pro Short</h3></div>
+          <div class="chart-body"><canvas id="ch2PerVideoChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="table-section">
+        <h3>Alle Shorts - Detailansicht</h3>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Titel</th>
+                <th>Views</th>
+                <th>Likes</th>
+                <th>Kommentare</th>
+                <th>Like-Rate</th>
+                <th>Datum</th>
+              </tr>
+            </thead>
+            <tbody id="ch2-shorts-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings View -->
+    <section id="view-settings" class="view">
+      <div class="settings-container">
+        <h2>Kanal-Einstellungen</h2>
+        <p class="settings-desc">Konfiguriere deine beiden YouTube-Kanäle. In dieser Demo-Version werden Beispieldaten verwendet. Für die Live-Version wird ein YouTube Data API v3 Schlüssel benötigt.</p>
+
+        <div class="settings-card">
+          <h3>Kanal 1</h3>
+          <div class="form-group">
+            <label for="ch1-name-input">Kanal-Name</label>
+            <input type="text" id="ch1-name-input" placeholder="z.B. MeinKanal">
+          </div>
+          <div class="form-group">
+            <label for="ch1-id-input">Channel ID</label>
+            <input type="text" id="ch1-id-input" placeholder="z.B. UCxxxxxxxxxxxxx">
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <h3>Kanal 2</h3>
+          <div class="form-group">
+            <label for="ch2-name-input">Kanal-Name</label>
+            <input type="text" id="ch2-name-input" placeholder="z.B. MeinZweiterKanal">
+          </div>
+          <div class="form-group">
+            <label for="ch2-id-input">Channel ID</label>
+            <input type="text" id="ch2-id-input" placeholder="z.B. UCxxxxxxxxxxxxx">
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <h3>API-Konfiguration</h3>
+          <div class="form-group">
+            <label for="api-key-input">YouTube Data API v3 Key</label>
+            <input type="password" id="api-key-input" placeholder="Dein API-Schlüssel">
+          </div>
+          <p class="hint">Der API-Key wird nur lokal im Browser gespeichert und nie an Dritte übermittelt.</p>
+        </div>
+
+        <button class="btn-primary" id="saveSettings">Einstellungen speichern</button>
+        <button class="btn-secondary" id="resetDemo">Demo-Daten zurücksetzen</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
