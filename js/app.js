@@ -8,7 +8,6 @@
   let currentData = null;
   let currentView = 'overview';
 
-  // ---- DOM Refs ----
   const navLinks = document.querySelectorAll('.nav-link');
   const views = document.querySelectorAll('.view');
   const pageTitle = document.getElementById('page-title');
@@ -19,32 +18,28 @@
   const saveSettingsBtn = document.getElementById('saveSettings');
   const resetDemoBtn = document.getElementById('resetDemo');
 
-  // ---- Navigation ----
   function switchView(viewName) {
     currentView = viewName;
 
     navLinks.forEach(link => {
       link.classList.toggle('active', link.dataset.view === viewName);
     });
-
     views.forEach(view => {
       view.classList.toggle('active', view.id === `view-${viewName}`);
     });
 
     const titles = {
-      overview: 'Gesamtübersicht',
+      overview: 'Gesamtuebersicht',
       channel1: currentData ? currentData.channel1.name : 'Kanal 1',
       channel2: currentData ? currentData.channel2.name : 'Kanal 2',
       settings: 'Einstellungen',
     };
     pageTitle.textContent = titles[viewName] || 'Dashboard';
 
-    // Close mobile sidebar
     sidebar.classList.remove('open');
     const overlay = document.querySelector('.sidebar-overlay');
     if (overlay) overlay.classList.remove('active');
 
-    // Render charts for the current view
     if (currentData) renderView(viewName);
   }
 
@@ -55,7 +50,6 @@
     });
   });
 
-  // ---- Mobile menu ----
   menuToggle.addEventListener('click', () => {
     sidebar.classList.toggle('open');
     let overlay = document.querySelector('.sidebar-overlay');
@@ -71,12 +65,10 @@
     overlay.classList.toggle('active');
   });
 
-  // ---- Data loading & rendering ----
   function loadData() {
     const days = parseInt(dateRange.value, 10);
     currentData = DashboardData.generateDemoData(days);
 
-    // Apply saved channel names
     const settings = DashboardData.loadSettings();
     if (settings) {
       if (settings.ch1Name) currentData.channel1.name = settings.ch1Name;
@@ -123,29 +115,29 @@
     }
   }
 
-  // ---- Overview Rendering ----
   function renderOverview() {
     const ch1 = currentData.channel1;
     const ch2 = currentData.channel2;
     const fmt = DashboardData.formatNumber;
     const pct = DashboardData.formatPercent;
+    const wh = DashboardData.formatWatchHours;
+    const aw = DashboardData.formatAvgWatch;
 
-    // Combined stats
     setText('total-views', fmt(ch1.totalViews + ch2.totalViews));
+    setText('total-followers', fmt(ch1.currentFollowers + ch2.currentFollowers));
+    setText('total-watchtime', wh(ch1.totalWatchTime + ch2.totalWatchTime));
     setText('total-likes', fmt(ch1.totalLikes + ch2.totalLikes));
     setText('total-comments', fmt(ch1.totalComments + ch2.totalComments));
-    setText('total-subs', fmt(ch1.newSubs + ch2.newSubs));
+    setText('total-avg-watch', aw((ch1.avgWatchTime + ch2.avgWatchTime) / 2));
     setText('total-shorts', (ch1.shorts.length + ch2.shorts.length).toString());
-    const combinedEngagement = (ch1.avgEngagement + ch2.avgEngagement) / 2;
-    setText('total-engagement', pct(combinedEngagement));
+    setText('total-engagement', pct((ch1.avgEngagement + ch2.avgEngagement) / 2));
 
-    // Changes
     setChange('total-views-change', avgChange(ch1.changes.views, ch2.changes.views));
+    setChange('total-followers-change', avgChange(ch1.changes.subs, ch2.changes.subs));
+    setChange('total-watchtime-change', avgChange(ch1.changes.watchTime, ch2.changes.watchTime));
     setChange('total-likes-change', avgChange(ch1.changes.likes, ch2.changes.likes));
     setChange('total-comments-change', avgChange(ch1.changes.comments, ch2.changes.comments));
-    setChange('total-subs-change', avgChange(ch1.changes.subs, ch2.changes.subs));
 
-    // Top shorts table
     const allShorts = [...ch1.shorts, ...ch2.shorts]
       .sort((a, b) => b.views - a.views)
       .slice(0, 10);
@@ -157,6 +149,7 @@
         <td>${escapeHtml(s.title)}</td>
         <td><span class="channel-badge ${s.channel}">${s.channel === 'ch1' ? ch1.name : ch2.name}</span></td>
         <td>${fmt(s.views)}</td>
+        <td>${wh(s.watchTimeSeconds)}</td>
         <td>${fmt(s.likes)}</td>
         <td>${fmt(s.comments)}</td>
         <td>${pct(s.engagement)}</td>
@@ -167,32 +160,33 @@
     DashboardCharts.renderOverview(currentData);
   }
 
-  // ---- Channel View Rendering ----
   function renderChannelView(prefix, ch) {
     const fmt = DashboardData.formatNumber;
     const pct = DashboardData.formatPercent;
+    const wh = DashboardData.formatWatchHours;
+    const aw = DashboardData.formatAvgWatch;
 
-    // Header
     document.getElementById(`${prefix}-name`).textContent = ch.name;
     document.getElementById(`${prefix}-description`).textContent = ch.description;
     document.getElementById(`${prefix}-avatar`).textContent = ch.initials;
+    setText(`${prefix}-follower-total`, fmt(ch.currentFollowers));
 
-    // Stats
     setText(`${prefix}-views`, fmt(ch.totalViews));
+    setText(`${prefix}-subs`, fmt(ch.newSubs));
+    setText(`${prefix}-watchtime`, wh(ch.totalWatchTime));
     setText(`${prefix}-likes`, fmt(ch.totalLikes));
     setText(`${prefix}-comments`, fmt(ch.totalComments));
-    setText(`${prefix}-subs`, fmt(ch.newSubs));
+    setText(`${prefix}-avg-watch`, aw(ch.avgWatchTime));
     setText(`${prefix}-count`, ch.shorts.length.toString());
     setText(`${prefix}-engagement`, pct(ch.avgEngagement));
 
-    // Changes
     setChange(`${prefix}-views-change`, ch.changes.views);
+    setChange(`${prefix}-subs-change`, ch.changes.subs);
+    setChange(`${prefix}-watchtime-change`, ch.changes.watchTime);
     setChange(`${prefix}-likes-change`, ch.changes.likes);
     setChange(`${prefix}-comments-change`, ch.changes.comments);
-    setChange(`${prefix}-subs-change`, ch.changes.subs);
     setChange(`${prefix}-engagement-change`, ch.changes.engagement);
 
-    // Table
     const sorted = [...ch.shorts].sort((a, b) => b.views - a.views);
     const tbody = document.getElementById(`${prefix}-shorts-table`);
     tbody.innerHTML = sorted.map((s, i) => `
@@ -200,15 +194,15 @@
         <td>${i + 1}</td>
         <td>${escapeHtml(s.title)}</td>
         <td>${fmt(s.views)}</td>
+        <td>${wh(s.watchTimeSeconds)}</td>
         <td>${fmt(s.likes)}</td>
         <td>${fmt(s.comments)}</td>
-        <td>${pct(s.likeRate)}</td>
+        <td>${aw(s.avgWatchSeconds)}</td>
         <td>${s.dateStr}</td>
       </tr>
     `).join('');
   }
 
-  // ---- Settings ----
   function renderSettings() {
     const settings = DashboardData.loadSettings() || {};
     document.getElementById('ch1-name-input').value = settings.ch1Name || currentData.channel1.name;
@@ -228,27 +222,23 @@
     };
     DashboardData.saveSettings(settings);
 
-    // Apply immediately
     if (settings.ch1Name) currentData.channel1.name = settings.ch1Name;
     if (settings.ch2Name) currentData.channel2.name = settings.ch2Name;
     updateNavNames();
-
     showToast('Einstellungen gespeichert!');
   });
 
   resetDemoBtn.addEventListener('click', () => {
     DashboardData.clearSettings();
     loadData();
-    showToast('Demo-Daten zurückgesetzt!');
+    showToast('Demo-Daten zurueckgesetzt!');
   });
 
-  // ---- Date range change ----
   dateRange.addEventListener('change', () => {
     DashboardCharts.destroyAll();
     loadData();
   });
 
-  // ---- Refresh ----
   refreshBtn.addEventListener('click', () => {
     DashboardCharts.destroyAll();
     loadData();
@@ -256,7 +246,6 @@
     setTimeout(() => { refreshBtn.style.transform = ''; }, 500);
   });
 
-  // ---- Helpers ----
   function setText(id, text) {
     const el = document.getElementById(id);
     if (el) el.textContent = text;
@@ -314,6 +303,5 @@
     }, 2500);
   }
 
-  // ---- Init ----
   loadData();
 })();
